@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Scheduler Pro v1.0.1</title>
+    <style>
+        :root {
+            --bg: #0f0f14;
+            --card: #1a1a22;
+            --border: #2a2a35;
+            --accent: #6366f1;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text: #f1f5f9;
+            --muted: #64748b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .header h1 { font-size: 1.5rem; }
+        .header small { color: var(--muted); font-size: 0.8rem; }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .grid { display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .card-title {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .task-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .task-item:hover { border-color: var(--accent); }
+        .task-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; }
+        .task-name { font-weight: 600; }
+        .task-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.5rem 0; }
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: var(--border);
+        }
+        .badge-action { background: rgba(99,102,241,0.2); color: var(--accent); }
+        .badge-schedule { background: rgba(16,185,129,0.2); color: var(--success); }
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+        .task-actions { display: flex; gap: 0.25rem; }
+        .toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+        }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: var(--border);
+            border-radius: 22px;
+            transition: 0.2s;
+        }
+        .toggle-slider:before {
+            content: "";
+            position: absolute;
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        .toggle input:checked + .toggle-slider { background: var(--success); }
+        .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
+        .history-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+        .history-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+        .history-dot.ok { background: var(--success); }
+        .history-dot.err { background: var(--danger); }
+        .empty { text-align: center; padding: 2rem; color: var(--muted); }
+        /* Modal */
+        .modal-bg {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-bg.active { display: flex; }
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-header h2 { font-size: 1.1rem; }
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .modal-body { padding: 1rem; }
+        .modal-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        .form-control:focus { outline: none; border-color: var(--accent); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        .hidden { display: none !important; }
+        .toast-box {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1100;
+        }
+        .toast {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            margin-top: 0.5rem;
+            animation: slideIn 0.3s;
+        }
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--danger); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>⏱ Task Scheduler Pro</h1>
+            <small>v1.0.4 - Automated task management</small>
+        </div>
+        <button class="btn btn-primary" onclick="openModal()">+ New Task</button>
+    </div>
+
+    <div class="grid">
+        <div>
+            <div class="card">
+                <div class="card-title">Scheduled Tasks</div>
+                <div id="tasks-list"><div class="empty">Loading...</div></div>
+            </div>
+        </div>
+        <div>
+            <div class="card">
+                <div class="card-title">Recent Activity</div>
+                <div id="history-list"><div class="empty">No activity yet</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-bg" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">New Task</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label>Task Name</label>
+                    <input type="text" class="form-control" id="f-name" placeholder="My Task">
+                </div>
+                <div class="form-group">
+                    <label>Action Type</label>
+                    <select class="form-control" id="f-action" onchange="updateFields()">
+                        <option value="">Select...</option>
+                        <option value="reboot_host">🔄 Reboot Host</option>
+                        <option value="restart_ha">🏠 Restart Home Assistant</option>
+                        <option value="restart_addon">📦 Restart Add-on</option>
+                        <option value="entity_control">💡 Control Device</option>
+                        <option value="call_service">⚡ Call Service</option>
+                        <option value="automation">🤖 Trigger Automation</option>
+                        <option value="script">📜 Run Script</option>
+                    </select>
+                </div>
+                <div class="form-group hidden" id="addon-group">
+                    <label>Select Add-on</label>
+                    <select class="form-control" id="f-addon"><option>Loading...</option></select>
+                </div>
+                <div class="form-group hidden" id="entity-group">
+                    <label>Select Device</label>
+                    <select class="form-control" id="f-entity"><option>Loading...</option></select>
+                    <div style="margin-top:0.5rem">
+                        <label>Action</label>
+                        <select class="form-control" id="f-entity-action">
+                            <option value="turn_on">Turn On</option>
+                            <option value="turn_off">Turn Off</option>
+                            <option value="toggle">Toggle</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group hidden" id="service-group">
+                    <div class="form-row">
+                        <div>
+                            <label>Domain</label>
+                            <input type="text" class="form-control" id="f-domain" placeholder="light">
+                        </div>
+                        <div>
+                            <label>Service</label>
+                            <input type="text" class="form-control" id="f-service" placeholder="turn_on">
+                        </div>
+                    </div>
+                    <div style="margin-top:0.5rem">
+                        <label>Data (JSON)</label>
+                        <textarea class="form-control" id="f-data" rows="2" placeholder='{"entity_id":"light.room"}'></textarea>
+                    </div>
+                </div>
+                <div class="form-group hidden" id="automation-group">
+                    <label>Select Automation</label>
+                    <select class="form-control" id="f-automation"><option>Loading...</option></select>
+                </div>
+                <div class="form-group hidden" id="script-group">
+                    <label>Select Script</label>
+                    <select class="form-control" id="f-script"><option>Loading...</option></select>
+                </div>
+                <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0">
+                <div class="form-group">
+                    <label>Schedule</label>
+                    <select class="form-control" id="f-schedule" onchange="updateSchedule()">
+                        <option value="interval">Every X hours/minutes</option>
+                        <option value="cron">At specific time</option>
+                    </select>
+                </div>
+                <div id="interval-group">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Every</label>
+                            <input type="number" class="form-control" id="f-interval-val" value="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Unit</label>
+                            <select class="form-control" id="f-interval-unit">
+                                <option value="minutes">Minutes</option>
+                                <option value="hours" selected>Hours</option>
+                                <option value="days">Days</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="cron-group" class="hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Hour (0-23)</label>
+                            <input type="text" class="form-control" id="f-cron-hour" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Minute (0-59)</label>
+                            <input type="text" class="form-control" id="f-cron-min" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Days (mon,tue,... or *)</label>
+                        <input type="text" class="form-control" id="f-cron-dow" value="*">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveTask()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-box" id="toasts"></div>
+
+    <script>
+        console.log('Task Scheduler Pro v1.0.1 loading...');
+
+        let tasks = {}, addons = [], automations = [], scripts = [], entities = [];
+
+        async function api(url, method = 'GET', body = null) {
+            // For HA ingress, we need to use relative URLs
+            // The browser will automatically resolve them relative to the current page
+            // Remove leading slash to make it relative
+            const relativeUrl = url.startsWith('/') ? '.' + url : url;
+            console.log(`API: ${method} ${relativeUrl} (from ${window.location.href})`);
+            const opts = { method, headers: { 'Content-Type': 'application/json' } };
+            if (body) opts.body = JSON.stringify(body);
+            try {
+                const res = await fetch(relativeUrl, opts);
+                console.log('Response status:', res.status);
+                if (!res.ok) {
+                    console.error('Response not ok:', res.status, res.statusText);
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                const data = await res.json();
+                console.log(`API response:`, data);
+                return data;
+            } catch (err) {
+                console.error('Fetch error:', err);
+                throw err;
+            }
+        }
+
+        function toast(msg, type = 'info') {
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.textContent = msg;
+            document.getElementById('toasts').appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        async function loadTasks() {
+            try {
+                const data = await api('./api/tasks');
+                tasks = data.tasks || {};
+                renderTasks();
+                renderHistory(data.history || []);
+            } catch (e) {
+                console.error('Load tasks failed:', e);
+            }
+        }
+
+        async function loadAddons() {
+            console.log('Loading addons...');
+            try {
+                addons = await api('./api/addons');
+                console.log('Addons loaded:', addons);
+                const sel = document.getElementById('f-addon');
+                if (addons.length === 0) {
+                    sel.innerHTML = '<option value="">No add-ons found</option>';
+                } else {
+                    sel.innerHTML = '<option value="">Select...</option>' + 
+                        addons.map(a => `<option value="${a.slug}">${a.name} (${a.state})</option>`).join('');
+                }
+            } catch (e) {
+                console.error('Load addons failed:', e);
+                document.getElementById('f-addon').innerHTML = '<option value="">Error loading</option>';
+            }
+        }
+
+        async function loadAutomations() {
+            try {
+                automations = await api('./api/automations');
+                const sel = document.getElementById('f-automation');
+                sel.innerHTML = automations.length ? 
+                    '<option value="">Select...</option>' + automations.map(a => 
+                        `<option value="${a.entity_id}">${a.attributes?.friendly_name || a.entity_id}</option>`
+                    ).join('') : '<option value="">None found</option>';
+            } catch (e) {
+                console.error('Load automations failed:', e);
+            }
+        }
+
+        async function loadScripts() {
+            try {
+                scripts = await api('./api/scripts');
+                const sel = document.getElementById('f-script');
+                sel.innerHTML = scripts.length ? 
+                    '<option value="">Select...</option>' + scripts.map(s => 
+                        `<option value="${s.entity_id}">${s.attributes?.friendly_name || s.entity_id}</option>`
+                    ).join('') : '<option value="">None found</option>';
+            } catch (e) {
+                console.error('Load scripts failed:', e);
+            }
+        }
+
+        async function loadEntities() {
+            try {
+                entities = await api('./api/entities');
+                const sel = document.getElementById('f-entity');
+                sel.innerHTML = entities.length ? 
+                    '<option value="">Select...</option>' + entities.map(e => 
+                        `<option value="${e.entity_id}">${e.attributes?.friendly_name || e.entity_id}</option>`
+                    ).join('') : '<option value="">None found</option>';
+            } catch (e) {
+                console.error('Load entities failed:', e);
+            }
+        }
+
+        function renderTasks() {
+            const list = document.getElementById('tasks-list');
+            const items = Object.entries(tasks);
+            if (!items.length) {
+                list.innerHTML = '<div class="empty">No tasks yet. Create one!</div>';
+                return;
+            }
+            list.innerHTML = items.map(([id, t]) => `
+                <div class="task-item" style="opacity:${t.enabled !== false ? 1 : 0.5}">
+                    <div class="task-header">
+                        <span class="task-name">${esc(t.name || 'Unnamed')}</span>
+                        <label class="toggle">
+                            <input type="checkbox" ${t.enabled !== false ? 'checked' : ''} onchange="toggleTask('${id}')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="task-badges">
+                        <span class="badge badge-action">${actionLabel(t.action_type)}</span>
+                        <span class="badge badge-schedule">${scheduleLabel(t)}</span>
+                    </div>
+                    <div class="task-footer">
+                        <span>${t.last_run ? 'Last: ' + timeAgo(t.last_run) : 'Never run'}</span>
+                        <div class="task-actions">
+                            <button class="btn btn-sm btn-success" onclick="runTask('${id}')">▶</button>
+                            <button class="btn btn-sm" onclick="editTask('${id}')">✎</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteTask('${id}')">🗑</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderHistory(hist) {
+            const list = document.getElementById('history-list');
+            if (!hist.length) {
+                list.innerHTML = '<div class="empty">No activity yet</div>';
+                return;
+            }
+            list.innerHTML = hist.slice().reverse().map(h => `
+                <div class="history-item">
+                    <div class="history-dot ${h.success ? 'ok' : 'err'}"></div>
+                    <div>
+                        <div>${esc(h.task_name)}</div>
+                        <div style="color:var(--muted)">${esc(h.message)} - ${timeAgo(h.executed_at)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function esc(s) { return s ? String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;') : ''; }
+
+        function actionLabel(a) {
+            const map = { reboot_host: '🔄 Reboot', restart_ha: '🏠 Restart HA', restart_addon: '📦 Add-on', 
+                         entity_control: '💡 Device', call_service: '⚡ Service', automation: '🤖 Auto', script: '📜 Script' };
+            return map[a] || a || 'Unknown';
+        }
+
+        function scheduleLabel(t) {
+            if (t.schedule_type === 'cron') return `${t.cron_hour || '*'}:${String(t.cron_minute || 0).padStart(2,'0')}`;
+            return `Every ${t.interval_value || 1} ${t.interval_unit || 'hours'}`;
+        }
+
+        function timeAgo(iso) {
+            if (!iso) return '';
+            const d = new Date(iso), now = new Date(), diff = now - d;
+            if (diff < 60000) return 'just now';
+            if (diff < 3600000) return Math.floor(diff/60000) + 'm ago';
+            if (diff < 86400000) return Math.floor(diff/3600000) + 'h ago';
+            return d.toLocaleDateString();
+        }
+
+        function updateFields() {
+            const action = document.getElementById('f-action').value;
+            document.getElementById('addon-group').classList.toggle('hidden', action !== 'restart_addon');
+            document.getElementById('entity-group').classList.toggle('hidden', action !== 'entity_control');
+            document.getElementById('service-group').classList.toggle('hidden', action !== 'call_service');
+            document.getElementById('automation-group').classList.toggle('hidden', action !== 'automation');
+            document.getElementById('script-group').classList.toggle('hidden', action !== 'script');
+        }
+
+        function updateSchedule() {
+            const sched = document.getElementById('f-schedule').value;
+            document.getElementById('interval-group').classList.toggle('hidden', sched !== 'interval');
+            document.getElementById('cron-group').classList.toggle('hidden', sched !== 'cron');
+        }
+
+        function openModal(id = null) {
+            document.getElementById('modal-title').textContent = id ? 'Edit Task' : 'New Task';
+            document.getElementById('edit-id').value = id || '';
+            
+            if (id && tasks[id]) {
+                const t = tasks[id];
+                document.getElementById('f-name').value = t.name || '';
+                document.getElementById('f-action').value = t.action_type || '';
+                document.getElementById('f-addon').value = t.addon_slug || '';
+                document.getElementById('f-entity').value = t.entity_id || '';
+                document.getElementById('f-entity-action').value = t.entity_action || 'turn_on';
+                document.getElementById('f-domain').value = t.service_domain || '';
+                document.getElementById('f-service').value = t.service_name || '';
+                document.getElementById('f-data').value = t.service_data ? JSON.stringify(t.service_data) : '';
+                document.getElementById('f-automation').value = t.automation_id || '';
+                document.getElementById('f-script').value = t.script_id || '';
+                document.getElementById('f-schedule').value = t.schedule_type || 'interval';
+                document.getElementById('f-interval-val').value = t.interval_value || 1;
+                document.getElementById('f-interval-unit').value = t.interval_unit || 'hours';
+                document.getElementById('f-cron-hour').value = t.cron_hour || '0';
+                document.getElementById('f-cron-min').value = t.cron_minute || '0';
+                document.getElementById('f-cron-dow').value = t.cron_dow || '*';
+            } else {
+                document.getElementById('f-name').value = '';
+                document.getElementById('f-action').value = '';
+                document.getElementById('f-entity-action').value = 'turn_on';
+                document.getElementById('f-schedule').value = 'interval';
+                document.getElementById('f-interval-val').value = 1;
+                document.getElementById('f-interval-unit').value = 'hours';
+            }
+            
+            updateFields();
+            updateSchedule();
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        async function saveTask() {
+            const id = document.getElementById('edit-id').value;
+            let svcData = {};
+            try {
+                const raw = document.getElementById('f-data').value;
+                if (raw) svcData = JSON.parse(raw);
+            } catch { toast('Invalid JSON', 'error'); return; }
+
+            const data = {
+                name: document.getElementById('f-name').value,
+                action_type: document.getElementById('f-action').value,
+                addon_slug: document.getElementById('f-addon').value,
+                entity_id: document.getElementById('f-entity').value,
+                entity_action: document.getElementById('f-entity-action').value,
+                service_domain: document.getElementById('f-domain').value,
+                service_name: document.getElementById('f-service').value,
+                service_data: svcData,
+                automation_id: document.getElementById('f-automation').value,
+                script_id: document.getElementById('f-script').value,
+                schedule_type: document.getElementById('f-schedule').value,
+                interval_value: parseInt(document.getElementById('f-interval-val').value) || 1,
+                interval_unit: document.getElementById('f-interval-unit').value,
+                cron_hour: document.getElementById('f-cron-hour').value,
+                cron_minute: document.getElementById('f-cron-min').value,
+                cron_dow: document.getElementById('f-cron-dow').value
+            };
+
+            try {
+                if (id) {
+                    await api(`./api/tasks/${id}`, 'PUT', data);
+                } else {
+                    await api('./api/tasks', 'POST', data);
+                }
+                toast('Task saved!', 'success');
+                closeModal();
+                loadTasks();
+            } catch (e) {
+                toast('Save failed', 'error');
+            }
+        }
+
+        async function toggleTask(id) {
+            await api(`/api/tasks/${id}/toggle`, 'POST');
+            loadTasks();
+        }
+
+        async function runTask(id) {
+            toast('Running...', 'info');
+            const res = await api(`/api/tasks/${id}/run`, 'POST');
+            toast(res.success ? 'Done!' : 'Failed: ' + res.message, res.success ? 'success' : 'error');
+            loadTasks();
+        }
+
+        function editTask(id) {
+            openModal(id);
+        }
+
+        async function deleteTask(id) {
+            if (!confirm('Delete this task?')) return;
+            await api(`/api/tasks/${id}`, 'DELETE');
+            toast('Deleted', 'success');
+            loadTasks();
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM ready, loading data...');
+            loadTasks();
+            loadAddons();
+            loadAutomations();
+            loadScripts();
+            loadEntities();
+            setInterval(loadTasks, 30000);
+        });
+
+        document.getElementById('modal').addEventListener('click', e => {
+            if (e.target.classList.contains('modal-bg')) closeModal();
+        });
+    </script>
+</body>
+</html>

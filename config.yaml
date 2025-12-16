@@ -1,0 +1,30 @@
+name: "Task Scheduler Pro"
+description: "Easy timer-based task scheduling for reboots, restarts, device control, and custom automations with a beautiful control panel"
+version: "1.0.4"
+slug: "task_scheduler_pro"
+url: "https://github.com/nhscan/ha-task-scheduler"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+init: false
+homeassistant_api: true
+hassio_api: true
+host_network: true
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:clock-outline
+panel_title: Task Scheduler
+options:
+  log_level: info
+schema:
+  log_level: list(debug|info|warning|error)
+ports:
+  8099/tcp: 8099
+ports_description:
+  8099/tcp: Web interface
+map:
+  - config:rw
+  - ssl:ro

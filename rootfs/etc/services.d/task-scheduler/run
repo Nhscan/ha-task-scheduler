@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Starting Task Scheduler Pro v1.0.2..."
+
+export LOG_LEVEL=$(bashio::config 'log_level')
+export SUPERVISOR_TOKEN="${SUPERVISOR_TOKEN}"
+
+cd /opt/task-scheduler
+exec python3 server.py
