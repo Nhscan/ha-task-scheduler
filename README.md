@@ -1,10 +1,10 @@
 # Task Scheduler Pro for Home Assistant
 
 ![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-blue.svg)
-![Version](https://img.shields.io/badge/version-1.0.4-green.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-A powerful and easy-to-use task scheduling add-on for Home Assistant with a beautiful dark-themed control panel. Schedule reboots, restart add-ons, control devices, trigger automations, and more!
+A powerful and easy-to-use task scheduling add-on for Home Assistant with a beautiful dark-themed control panel. Schedule reboots, control lights with colors, trigger automations at sunrise/sunset, send notifications, and more!
 
 ![Task Scheduler Pro Screenshot](screenshots/main-ui.png)
 
@@ -13,14 +13,15 @@ A powerful and easy-to-use task scheduling add-on for Home Assistant with a beau
 - 🔄 **System Control** - Schedule host reboots and Home Assistant restarts
 - 📦 **Add-on Management** - Restart any add-on on a schedule
 - 💡 **Device Control** - Turn lights, switches, fans, and other devices on/off/toggle
+- 🎨 **Advanced Light Control** - Set brightness, RGB colors, color temperature, and transition times
+- 🌅 **Sunrise/Sunset Triggers** - Schedule tasks relative to dawn and dusk with offset support
+- 🔔 **Notifications** - Send notifications to your phone or other devices
 - 🤖 **Automation Triggers** - Trigger any automation on a schedule
 - 📜 **Script Execution** - Run scripts at scheduled times
 - ⚡ **Service Calls** - Call any Home Assistant service with custom data
-- ⏰ **Flexible Scheduling** - Interval-based (every X minutes/hours/days) or cron-style (specific times)
+- ⏰ **Flexible Scheduling** - Interval-based, cron-style, sunrise/sunset, or one-time
 - 🎨 **Beautiful UI** - Modern dark-themed interface that matches Home Assistant
 - 📊 **Execution History** - Track when tasks run and their success/failure status
-- ✅ **Enable/Disable** - Easily toggle tasks on or off without deleting them
-- ▶️ **Manual Execution** - Run any task immediately with one click
 
 ## Installation
 

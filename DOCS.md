@@ -18,6 +18,8 @@ Schedule automated tasks for your Home Assistant system with a beautiful, easy-t
 | 🏠 Restart HA | Restart Home Assistant core only |
 | 📦 Restart Add-on | Restart a specific add-on |
 | 💡 Control Device | Turn on/off/toggle lights, switches, etc. |
+| 🎨 Light Control | Set brightness, color, and color temperature |
+| 🔔 Send Notification | Send a notification to your phone |
 | ⚡ Call Service | Call any Home Assistant service |
 | 🤖 Trigger Automation | Trigger an existing automation |
 | 📜 Run Script | Execute a script |
@@ -25,13 +27,24 @@ Schedule automated tasks for your Home Assistant system with a beautiful, easy-t
 ### Schedule Types
 
 - **Interval**: Run every X minutes, hours, or days
-- **Cron**: Run at specific times (e.g., 3:00 AM every Sunday)
+- **Specific Time**: Run at a specific time daily (with day selection)
+- **Sunrise/Sunset**: Run at dawn or dusk with optional offset
+- **One Time**: Run once at a specific date and time
+
+### Light Control Features
+
+When using the "Light Control" action, you can:
+- Set brightness from 1-100%
+- Choose an RGB color with the color picker
+- Set color temperature from warm to cool
+- Add a transition time for smooth fades
 
 ## Tips
 
 - Use the toggle switch to quickly enable/disable tasks without deleting them
 - Click the ▶️ button to test a task immediately
 - Check the Recent Activity panel to see execution history
+- Use sunrise/sunset triggers for outdoor lights
 
 ## Support
 

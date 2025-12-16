@@ -1,6 +1,6 @@
 name: "Task Scheduler Pro"
-description: "Easy timer-based task scheduling for reboots, restarts, device control, and custom automations with a beautiful control panel"
-version: "1.0.4"
+description: "Easy timer-based task scheduling with sunrise/sunset triggers, light color control, notifications, and more"
+version: "1.1.0"
 slug: "task_scheduler_pro"
 url: "https://github.com/nhscan/ha-task-scheduler"
 arch:

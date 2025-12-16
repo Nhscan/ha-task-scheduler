@@ -2,6 +2,23 @@
 
 All notable changes to Task Scheduler Pro will be documented in this file.
 
+## [1.1.0] - 2024-12-16
+
+### Added
+- 🌅 **Sunrise/Sunset Scheduling** - Schedule tasks relative to dawn and dusk
+  - Choose sunrise or sunset as trigger
+  - Set offset in minutes (before or after)
+- 🎨 **Advanced Light Control** - Full control over smart lights
+  - Brightness slider (1-100%)
+  - RGB color picker
+  - Color temperature (warm to cool)
+  - Transition time for smooth fades
+- 🔔 **Notifications** - Send notifications to mobile devices
+  - Select from available notify services
+  - Custom title and message
+- 📅 **One-time Scheduling** - Run a task once at a specific date/time
+- Improved UI with better organization and visual feedback
+
 ## [1.0.4] - 2024-12-15
 
 ### Added
