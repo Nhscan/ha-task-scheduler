@@ -31,7 +31,7 @@ A powerful and easy-to-use task scheduling add-on for Home Assistant with a beau
 3. Click the **⋮** menu (top right) → **Repositories**
 4. Add this repository URL:
    ```
-   https://github.com/YOUR_USERNAME/ha-task-scheduler
+   https://github.com/nhscan/ha-task-scheduler
    ```
 5. Click **Add** → **Close**
 6. Find "Task Scheduler Pro" in the add-on store and click it
@@ -41,7 +41,7 @@ A powerful and easy-to-use task scheduling add-on for Home Assistant with a beau
 
 ### Method 2: Manual Installation
 
-1. Download the latest release from the [Releases](https://github.com/YOUR_USERNAME/ha-task-scheduler/releases) page
+1. Download the latest release from the [Releases](https://github.com/nhscan/ha-task-scheduler/releases) page
 2. Extract the `ha-task-scheduler` folder
 3. Copy it to your Home Assistant's `/addons` directory:
    - **Via Samba share**: `\\homeassistant.local\addons\`
