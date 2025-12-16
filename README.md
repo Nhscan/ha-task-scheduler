@@ -6,6 +6,16 @@
 
 A powerful and easy-to-use task scheduling add-on for Home Assistant with a beautiful dark-themed control panel. Schedule reboots, control lights with colors, trigger automations at sunrise/sunset, send notifications, and more!
 
+## Quick Install
+
+[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fnhscan%2Fha-task-scheduler)
+
+**Or manually:**
+1. Go to **Settings** → **Add-ons** → **Add-on Store**
+2. Click ⋮ → **Repositories**
+3. Add: `https://github.com/nhscan/ha-task-scheduler`
+4. Find "Task Scheduler Pro" and click **Install**
+
 ![Task Scheduler Pro Screenshot](screenshots/main-ui.png)
 
 ## Features
